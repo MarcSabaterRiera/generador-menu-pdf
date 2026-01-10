@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/styles.css">
+    <title>{% if menu %}Editar{% else %}Crear{% endif %} menú</title>
+</head>
+<body>
+    <h1>{% if menu %}Editar{% else %}Crear{% endif %} menú</h1>
+
+    <form method="POST" action="{% if menu %}/menu/edit/{{ menu.name }}{% else %}/menu/new{% endif %}">
+        <!-- Campo oculto para simular PUT cuando editamos -->
+        {% if menu %}
+            <input type="hidden" name="_method" value="PUT">
+        {% endif %}
+
+        <div class="form-group">
+            <label>Nombre del menú</label>
+            <input type="text" name="name" value="{{ menu.name if menu }}" required {% if menu %}readonly{% endif %}>
+            {% if menu %}
+                <small style="color: var(--color-text-muted);">El nombre del menú no se puede cambiar al editar</small>
+            {% endif %}
+        </div>
+
+        <div class="form-section-header">
+            <h2>Secciones del menú</h2>
+            <button type="button" onclick="addNewSection()" class="btn btn-secondary">
+                + Agregar sección al final
+            </button>
+        </div>
+
+        <div id="sections-container">
+            {% if menu and menu.sections %}
+                {% for section in menu.sections %}
+                    <div class="section-block" data-index="{{ loop.index0 }}">
+                        <div class="section-header">
+                            <input type="text" 
+                                   name="section_name_{{ loop.index0 }}" 
+                                   value="{{ section.name }}" 
+                                   placeholder="Nombre de la sección"
+                                   class="section-name-input"
+                                   required>
+                        </div>
+                        <textarea name="section_items_{{ loop.index0 }}" 
+                                  placeholder="Escribe cada plato en una línea nueva"
+                                  rows="5">{{ section.dishes | join('\n') }}</textarea>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn">Guardar menú</button>
+            <a href="/" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+
+    <script src="/static/menu_form.js"></script>
+</body>
+</html>

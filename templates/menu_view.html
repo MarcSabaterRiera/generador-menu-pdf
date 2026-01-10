@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/styles.css">
+    <title>{{ menu.name }}</title>
+</head>
+<body>
+    <h1>{{ menu.name }}</h1>
+    <p class="menu-meta">Creado el {{ menu.created_at }}</p>
+
+    {% if menu.sections %}
+        {% for section in menu.sections %}
+            <div class="menu-section">
+                <h2>{{ section.name }}</h2>
+                {% if section.dishes %}
+                    <ul>
+                        {% for dish in section.dishes %}
+                            <li class="menu-item">{{ dish }}</li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="empty-section">No hay platos en esta sección</p>
+                {% endif %}
+            </div>
+        {% endfor %}
+    {% else %}
+        <p class="empty-menu">Este menú no tiene secciones definidas</p>
+    {% endif %}
+
+    <div class="actions">
+        <a href="/menu/edit/{{ menu.name }}" class="btn btn-secondary">Editar menú</a>
+        
+        <!-- Formulario para DELETE -->
+        <form method="POST" action="/menu/delete/{{ menu.name }}" style="display: inline;">
+            <input type="hidden" name="_method" value="DELETE">
+            <button type="submit" class="btn-danger" onclick="return confirm('¿Estás seguro de eliminar este menú?')">
+                Eliminar menú
+            </button>
+        </form>
+    </div>
+
+    <a href="/" class="back-link">← Volver al inicio</a>
+</body>
+</html>

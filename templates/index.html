@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/styles.css">
+    <title>Menús</title>
+</head>
+<body>
+    <h1>Gestión de Menús</h1>
+
+    <a href="/menu/new" class="btn">Crear nuevo menú</a>
+
+    <h2>Menús existentes</h2>
+    <ul>
+        {% for menu in menus %}
+            <li>
+                <span>
+                    <strong>{{ menu.name }}</strong>
+                    <span class="menu-meta">{{ menu.created_at }}</span>
+                </span>
+                <div class="actions">
+                    <a href="/menu/view/{{ menu.name }}" class="btn btn-secondary">Ver</a>
+                    <a href="/menu/edit/{{ menu.name }}" class="btn btn-secondary">Editar</a>
+                    
+                    <!-- Formulario para DELETE -->
+                    <form method="POST" action="/menu/delete/{{ menu.name }}" style="display: inline;">
+                        <input type="hidden" name="_method" value="DELETE">
+                        <button type="submit" class="btn-danger" onclick="return confirm('¿Estás seguro de eliminar este menú?')">
+                            Eliminar
+                        </button>
+                    </form>
+                </div>
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
