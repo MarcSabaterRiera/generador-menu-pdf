@@ -14,14 +14,24 @@
         {% for section in menu.sections %}
             <div class="menu-section">
                 <h2>{{ section.name }}</h2>
-                {% if section.dishes %}
-                    <ul>
-                        {% for dish in section.dishes %}
-                            <li class="menu-item">{{ dish }}</li>
+                
+                {% if section.description %}
+                    <p class="section-description-text">{{ section.description }}</p>
+                {% endif %}
+
+                {% if section.subsections %}
+                    <div class="subsections-list">
+                        {% for subsection in section.subsections %}
+                            <div class="menu-subsection">
+                                <h3 class="subsection-title">{{ subsection.name }}</h3>
+                                {% if subsection.description %}
+                                    <p class="subsection-description-text">{{ subsection.description }}</p>
+                                {% endif %}
+                            </div>
                         {% endfor %}
-                    </ul>
+                    </div>
                 {% else %}
-                    <p class="empty-section">No hay platos en esta sección</p>
+                    <p class="empty-section">Esta sección no tiene subsecciones definidas</p>
                 {% endif %}
             </div>
         {% endfor %}

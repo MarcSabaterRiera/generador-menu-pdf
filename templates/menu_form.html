@@ -38,13 +38,58 @@
                             <input type="text" 
                                    name="section_name_{{ loop.index0 }}" 
                                    value="{{ section.name }}" 
-                                   placeholder="Nombre de la sección"
+                                   placeholder="Nombre de la sección (ej: Entrantes, Primeros...)"
                                    class="section-name-input"
                                    required>
+                            <div class="section-actions">
+                                <button type="button" class="btn-icon btn-up" onclick="moveSectionUp({{ loop.index0 }})" title="Mover arriba">↑</button>
+                                <button type="button" class="btn-icon btn-down" onclick="moveSectionDown({{ loop.index0 }})" title="Mover abajo">↓</button>
+                                <button type="button" class="btn-icon btn-add" onclick="insertSectionAfter({{ loop.index0 }})" title="Insertar sección">+</button>
+                                <button type="button" class="btn-icon btn-remove" onclick="removeSection({{ loop.index0 }})" title="Eliminar sección">×</button>
+                            </div>
                         </div>
-                        <textarea name="section_items_{{ loop.index0 }}" 
-                                  placeholder="Escribe cada plato en una línea nueva"
-                                  rows="5">{{ section.dishes | join('\n') }}</textarea>
+                        
+                        <div class="section-description">
+                            <label>Descripción opcional de la sección</label>
+                            <textarea name="section_description_{{ loop.index0 }}" 
+                                      placeholder="Ej: Selección de aperitivos para comenzar la celebración"
+                                      rows="2">{{ section.description if section.description }}</textarea>
+                        </div>
+
+                        <div class="subsections-header">
+                            <h3>Subsecciones</h3>
+                            <button type="button" onclick="addSubsection({{ loop.index0 }})" class="btn-small">
+                                + Añadir subsección
+                            </button>
+                        </div>
+
+                        <div class="subsections-container" data-section-index="{{ loop.index0 }}">
+                            {% if section.subsections %}
+                                {% set section_idx = loop.index0 %}
+                                {% for subsection in section.subsections %}
+                                    <div class="subsection-block" data-subsection-index="{{ loop.index0 }}">
+                                        <div class="subsection-header">
+                                            <input type="text" 
+                                                   name="subsection_name_{{ section_idx }}_{{ loop.index0 }}" 
+                                                   value="{{ subsection.name }}" 
+                                                   placeholder="Nombre de subsección (ej: Bebidas y Pica-Pica, Aguas Aromatizadas...)"
+                                                   class="subsection-name-input"
+                                                   required>
+                                            <div class="subsection-actions">
+                                                <button type="button" class="btn-icon-small btn-up" onclick="moveSubsectionUp({{ section_idx }}, {{ loop.index0 }})" title="Mover arriba">↑</button>
+                                                <button type="button" class="btn-icon-small btn-down" onclick="moveSubsectionDown({{ section_idx }}, {{ loop.index0 }})" title="Mover abajo">↓</button>
+                                                <button type="button" class="btn-icon-small btn-remove" onclick="removeSubsection({{ section_idx }}, {{ loop.index0 }})" title="Eliminar">×</button>
+                                            </div>
+                                        </div>
+                                        <div class="subsection-description">
+                                            <textarea name="subsection_description_{{ section_idx }}_{{ loop.index0 }}" 
+                                                      placeholder="Descripción opcional de la subsección"
+                                                      rows="2">{{ subsection.description if subsection.description }}</textarea>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
                     </div>
                 {% endfor %}
             {% endif %}

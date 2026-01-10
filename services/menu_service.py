@@ -30,30 +30,45 @@ class MenuService:
 
     def _parse_sections(self, form_data):
         """
-        Parse sections from form data.
-        Sections are sent as section_name_{index} and section_items_{index}
+        Parse sections with subsections from form data.
+        Structure:
+        - section_name_{section_index}
+        - section_description_{section_index}
+        - subsection_name_{section_index}_{subsection_index}
+        - subsection_description_{section_index}_{subsection_index}
         """
         sections = []
-        index = 0
+        section_index = 0
 
-        while f"section_name_{index}" in form_data:
-            section_name = form_data[f"section_name_{index}"].strip()
-            section_items_raw = form_data.get(f"section_items_{index}", "")
+        while f"section_name_{section_index}" in form_data:
+            section_name = form_data[f"section_name_{section_index}"].strip()
+            section_description = form_data.get(f"section_description_{section_index}", "").strip()
             
-            # Filter out empty lines and strip whitespace
-            section_dishes = [
-                item.strip() 
-                for item in section_items_raw.splitlines() 
-                if item.strip()
-            ]
+            # Parse subsections for this section
+            subsections = []
+            subsection_index = 0
+            
+            while f"subsection_name_{section_index}_{subsection_index}" in form_data:
+                subsection_name = form_data[f"subsection_name_{section_index}_{subsection_index}"].strip()
+                subsection_description = form_data.get(f"subsection_description_{section_index}_{subsection_index}", "").strip()
+                
+                # Only add subsection if it has a name
+                if subsection_name:
+                    subsections.append({
+                        "name": subsection_name,
+                        "description": subsection_description
+                    })
+                
+                subsection_index += 1
             
             # Only add section if it has a name
             if section_name:
                 sections.append({
                     "name": section_name,
-                    "dishes": section_dishes
+                    "description": section_description,
+                    "subsections": subsections
                 })
             
-            index += 1
+            section_index += 1
 
         return sections
