@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/styles.css">
+    <title>404 - Página no encontrada</title>
+    <style>
+        .error-container {
+            text-align: center;
+            padding: var(--spacing-xl) var(--spacing-lg);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .error-code {
+            font-size: 6rem;
+            font-weight: bold;
+            color: var(--color-primary);
+            margin: 0;
+            line-height: 1;
+        }
+        
+        .error-title {
+            font-size: var(--font-size-2xl);
+            color: var(--color-primary-dark);
+            margin-top: var(--spacing-md);
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .error-message {
+            font-size: var(--font-size-lg);
+            color: var(--color-text-secondary);
+            margin-bottom: var(--spacing-xl);
+        }
+        
+        .error-icon {
+            font-size: 8rem;
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .error-actions {
+            display: flex;
+            gap: var(--spacing-md);
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: var(--spacing-xl);
+        }
+        
+        .error-card {
+            background-color: var(--color-bg-card);
+            padding: var(--spacing-xl);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--box-shadow);
+            margin-top: var(--spacing-lg);
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <div class="error-card">
+            <div class="error-icon">🔍</div>
+            <h1 class="error-code">404</h1>
+            <h2 class="error-title">Página no encontrada</h2>
+            <p class="error-message">
+                Lo sentimos, la página que estás buscando no existe o ha sido movida.
+            </p>
+            
+            <div class="error-actions">
+                <a href="/" class="btn">
+                    Volver al inicio
+                </a>
+                <a href="javascript:history.back()" class="btn btn-secondary">
+                    Volver atrás
+                </a>
+            </div>
+        </div>
+        
+        <p style="margin-top: var(--spacing-xl); color: var(--color-text-muted); font-size: var(--font-size-sm);">
+            Si crees que esto es un error, por favor contacta con el administrador.
+        </p>
+    </div>
+</body>
+</html>

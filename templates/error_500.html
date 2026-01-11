@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/styles.css">
+    <title>500 - Error del servidor</title>
+    <style>
+        .error-container {
+            text-align: center;
+            padding: var(--spacing-xl) var(--spacing-lg);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .error-code {
+            font-size: 6rem;
+            font-weight: bold;
+            color: var(--color-danger);
+            margin: 0;
+            line-height: 1;
+        }
+        
+        .error-title {
+            font-size: var(--font-size-2xl);
+            color: var(--color-primary-dark);
+            margin-top: var(--spacing-md);
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .error-message {
+            font-size: var(--font-size-lg);
+            color: var(--color-text-secondary);
+            margin-bottom: var(--spacing-xl);
+        }
+        
+        .error-icon {
+            font-size: 8rem;
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .error-actions {
+            display: flex;
+            gap: var(--spacing-md);
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: var(--spacing-xl);
+        }
+        
+        .error-card {
+            background-color: var(--color-bg-card);
+            padding: var(--spacing-xl);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--box-shadow);
+            margin-top: var(--spacing-lg);
+        }
+        
+        .error-details {
+            background-color: var(--color-accent);
+            border: 2px solid var(--color-danger);
+            border-radius: var(--border-radius);
+            padding: var(--spacing-md);
+            margin-top: var(--spacing-xl);
+            text-align: left;
+        }
+        
+        .error-details summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--color-danger);
+            padding: var(--spacing-sm);
+            user-select: none;
+        }
+        
+        .error-details summary:hover {
+            background-color: var(--color-bg-hover);
+            border-radius: var(--border-radius-sm);
+        }
+        
+        .error-details pre {
+            background-color: var(--color-bg-main);
+            padding: var(--spacing-md);
+            border-radius: var(--border-radius-sm);
+            overflow-x: auto;
+            font-size: var(--font-size-sm);
+            margin-top: var(--spacing-sm);
+            border-left: 3px solid var(--color-danger);
+        }
+        
+        .error-details p {
+            margin: var(--spacing-sm) 0;
+            color: var(--color-text-primary);
+        }
+        
+        .error-details strong {
+            color: var(--color-danger);
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <div class="error-card">
+            <div class="error-icon">⚠️</div>
+            <h1 class="error-code">500</h1>
+            <h2 class="error-title">Error interno del servidor</h2>
+            <p class="error-message">
+                Ups... Algo salió mal en el servidor. Nuestro equipo ha sido notificado y estamos trabajando para solucionarlo.
+            </p>
+            
+            <div class="error-actions">
+                <a href="/" class="btn">
+                    Volver al inicio
+                </a>
+                <a href="javascript:location.reload()" class="btn btn-secondary">
+                    Reintentar
+                </a>
+            </div>
+            
+            {% if error_details %}
+            <div class="error-details">
+                <details>
+                    <summary>🔧 Detalles técnicos del error (modo debug)</summary>
+                    
+                    {% if error_details.type %}
+                    <p><strong>Tipo de error:</strong> {{ error_details.type }}</p>
+                    {% endif %}
+                    
+                    {% if error_details.message %}
+                    <p><strong>Mensaje:</strong> {{ error_details.message }}</p>
+                    {% endif %}
+                    
+                    {% if error_details.traceback %}
+                    <p><strong>Traceback:</strong></p>
+                    <pre>{{ error_details.traceback }}</pre>
+                    {% endif %}
+                </details>
+            </div>
+            {% endif %}
+        </div>
+        
+        <p style="margin-top: var(--spacing-xl); color: var(--color-text-muted); font-size: var(--font-size-sm);">
+            Si el problema persiste, por favor contacta con el administrador del sistema.
+        </p>
+    </div>
+</body>
+</html>
