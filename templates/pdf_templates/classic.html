@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        @page {
+            size: A4;
+            margin: 2cm;
+        }
+
+        body {
+            font-family: 'Georgia', 'Times New Roman', serif;
+            color: #2d3748;
+            line-height: 1.8;
+            margin: 0;
+            padding: 0;
+        }
+
+        .menu-header {
+            text-align: center;
+            border-bottom: 3px double #2c5f7c;
+            padding-bottom: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .menu-title {
+            font-size: 2.5rem;
+            color: #1a3d52;
+            margin: 0 0 0.5rem 0;
+            font-weight: bold;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .menu-date {
+            font-size: 0.9rem;
+            color: #718096;
+            font-style: italic;
+        }
+
+        .section {
+            margin-bottom: 2.5rem;
+            page-break-inside: avoid;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            color: #2c5f7c;
+            border-bottom: 2px solid #2c5f7c;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .section-description {
+            font-size: 0.95rem;
+            color: #4a5568;
+            font-style: italic;
+            margin-bottom: 1.5rem;
+            padding-left: 1rem;
+            border-left: 3px solid #a8c5d1;
+        }
+
+        .subsections {
+            margin-left: 1.5rem;
+        }
+
+        .subsection {
+            margin-bottom: 1.5rem;
+            page-break-inside: avoid;
+        }
+
+        .subsection-title {
+            font-size: 1.2rem;
+            color: #1a3d52;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        .subsection-title::before {
+            content: "◆ ";
+            color: #2c5f7c;
+        }
+
+        .subsection-description {
+            font-size: 0.9rem;
+            color: #4a5568;
+            font-style: italic;
+            margin-top: 0.3rem;
+            padding-left: 1.5rem;
+        }
+
+        .decorative-line {
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(to right, transparent, #2c5f7c, transparent);
+            margin: 2rem 0;
+        }
+
+        .footer {
+            position: fixed;
+            bottom: 1cm;
+            left: 2cm;
+            right: 2cm;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #718096;
+            border-top: 1px solid #a8c5d1;
+            padding-top: 0.5rem;
+        }
+
+        {% if is_preview %}
+        /* Estilos adicionales para previsualización */
+        body {
+            padding: 2rem;
+            background-color: #f8fafb;
+        }
+        {% endif %}
+    </style>
+</head>
+<body>
+    <div class="menu-header">
+        <h1 class="menu-title">{{ menu.name }}</h1>
+        <p class="menu-date">{{ menu.created_at }}</p>
+    </div>
+
+    {% for section in menu.sections %}
+    <div class="section">
+        <h2 class="section-title">{{ section.name }}</h2>
+        
+        {% if section.description %}
+        <p class="section-description">{{ section.description }}</p>
+        {% endif %}
+
+        {% if section.subsections %}
+        <div class="subsections">
+            {% for subsection in section.subsections %}
+            <div class="subsection">
+                <h3 class="subsection-title">{{ subsection.name }}</h3>
+                {% if subsection.description %}
+                <p class="subsection-description">{{ subsection.description }}</p>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+
+    {% if not loop.last %}
+    <div class="decorative-line"></div>
+    {% endif %}
+    {% endfor %}
+
+    {% if not is_preview %}
+    <div class="footer">
+        Menú creado el {{ menu.created_at }}
+    </div>
+    {% endif %}
+</body>
+</html>

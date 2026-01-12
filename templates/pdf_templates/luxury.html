@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        @page {
+            size: A4;
+            margin: 2cm;
+        }
+
+        body {
+            font-family: 'Didot', 'Bodoni MT', 'Garamond', serif;
+            color: #d4af37;
+            line-height: 1.8;
+            margin: 0;
+            padding: 0;
+            background: #1a1a1a;
+        }
+
+        .menu-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 3rem 2rem;
+            background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+            border: 2px solid #d4af37;
+            position: relative;
+            box-shadow: inset 0 0 30px rgba(212, 175, 55, 0.1);
+        }
+
+        .menu-header::before {
+            content: '';
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            right: 8px;
+            bottom: 8px;
+            border: 1px solid #d4af37;
+            opacity: 0.5;
+        }
+
+        .menu-title {
+            font-size: 3.2rem;
+            color: #d4af37;
+            margin: 0 0 1rem 0;
+            font-weight: 300;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+            position: relative;
+            z-index: 1;
+        }
+
+        .menu-title::after {
+            content: '';
+            display: block;
+            width: 120px;
+            height: 3px;
+            background: linear-gradient(to right, transparent, #d4af37, transparent);
+            margin: 1.5rem auto;
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+        }
+
+        .menu-date {
+            font-size: 1rem;
+            color: #b8924f;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            position: relative;
+            z-index: 1;
+        }
+
+        .section {
+            margin-bottom: 3rem;
+            page-break-inside: avoid;
+            background: linear-gradient(135deg, #252525 0%, #1a1a1a 100%);
+            padding: 2rem;
+            border: 1px solid #333333;
+            position: relative;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(to right, transparent, #d4af37, transparent);
+        }
+
+        .section-title {
+            font-size: 2rem;
+            color: #d4af37;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-weight: 300;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            text-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+        }
+
+        .section-description {
+            font-size: 1rem;
+            color: #b8924f;
+            font-style: italic;
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 1rem 2rem;
+            border-left: 2px solid #d4af37;
+            border-right: 2px solid #d4af37;
+            background: rgba(212, 175, 55, 0.05);
+        }
+
+        .subsections {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .subsection {
+            padding: 1.5rem;
+            border-left: 3px solid #d4af37;
+            background: linear-gradient(to right, rgba(212, 175, 55, 0.1) 0%, transparent 10%);
+            page-break-inside: avoid;
+            position: relative;
+        }
+
+        .subsection::before {
+            content: '◆';
+            position: absolute;
+            left: -12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #d4af37;
+            background: #1a1a1a;
+            font-size: 1rem;
+            text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+        }
+
+        .subsection-title {
+            font-size: 1.3rem;
+            color: #e5c76b;
+            margin-bottom: 0.5rem;
+            font-weight: 400;
+            letter-spacing: 2px;
+        }
+
+        .subsection-description {
+            font-size: 0.95rem;
+            color: #b8924f;
+            margin-top: 0.5rem;
+            font-style: italic;
+            line-height: 1.7;
+        }
+
+        .luxury-divider {
+            text-align: center;
+            margin: 3rem 0;
+            color: #d4af37;
+            font-size: 1.5rem;
+            letter-spacing: 2rem;
+            text-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+        }
+
+        {% if is_preview %}
+        body {
+            padding: 2rem;
+            background: #0a0a0a;
+        }
+        {% endif %}
+    </style>
+</head>
+<body>
+    <div class="menu-header">
+        <h1 class="menu-title">{{ menu.name }}</h1>
+        <p class="menu-date">{{ menu.created_at }}</p>
+    </div>
+
+    {% for section in menu.sections %}
+    <div class="section">
+        <h2 class="section-title">{{ section.name }}</h2>
+        
+        {% if section.description %}
+        <p class="section-description">{{ section.description }}</p>
+        {% endif %}
+
+        {% if section.subsections %}
+        <div class="subsections">
+            {% for subsection in section.subsections %}
+            <div class="subsection">
+                <h3 class="subsection-title">{{ subsection.name }}</h3>
+                {% if subsection.description %}
+                <p class="subsection-description">{{ subsection.description }}</p>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+
+    {% if not loop.last %}
+    <div class="luxury-divider">◆ ◇ ◆</div>
+    {% endif %}
+    {% endfor %}
+</body>
+</html>

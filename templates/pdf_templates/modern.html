@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        @page {
+            size: A4;
+            margin: 1.5cm;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            color: #1a1a1a;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background: #ffffff;
+        }
+
+        .menu-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .menu-title {
+            font-size: 3rem;
+            color: #000000;
+            margin: 0 0 0.5rem 0;
+            font-weight: 300;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+        }
+
+        .menu-date {
+            font-size: 0.9rem;
+            color: #999999;
+            font-weight: 300;
+            letter-spacing: 2px;
+        }
+
+        .section {
+            margin-bottom: 3rem;
+            page-break-inside: avoid;
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            color: #000000;
+            margin-bottom: 1.5rem;
+            font-weight: 400;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            position: relative;
+            padding-left: 20px;
+        }
+
+        .section-title::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 24px;
+            background: #000000;
+        }
+
+        .section-description {
+            font-size: 0.95rem;
+            color: #666666;
+            font-style: italic;
+            margin-bottom: 1.5rem;
+            padding-left: 20px;
+            font-weight: 300;
+        }
+
+        .subsections {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .subsection {
+            padding-left: 20px;
+            page-break-inside: avoid;
+        }
+
+        .subsection-title {
+            font-size: 1.1rem;
+            color: #000000;
+            margin-bottom: 0.3rem;
+            font-weight: 500;
+            letter-spacing: 1px;
+        }
+
+        .subsection-description {
+            font-size: 0.9rem;
+            color: #666666;
+            margin-top: 0.2rem;
+            font-weight: 300;
+            line-height: 1.5;
+        }
+
+        {% if is_preview %}
+        body {
+            padding: 2rem;
+            background-color: #fafafa;
+        }
+        {% endif %}
+    </style>
+</head>
+<body>
+    <div class="menu-header">
+        <h1 class="menu-title">{{ menu.name }}</h1>
+        <p class="menu-date">{{ menu.created_at }}</p>
+    </div>
+
+    {% for section in menu.sections %}
+    <div class="section">
+        <h2 class="section-title">{{ section.name }}</h2>
+        
+        {% if section.description %}
+        <p class="section-description">{{ section.description }}</p>
+        {% endif %}
+
+        {% if section.subsections %}
+        <div class="subsections">
+            {% for subsection in section.subsections %}
+            <div class="subsection">
+                <h3 class="subsection-title">{{ subsection.name }}</h3>
+                {% if subsection.description %}
+                <p class="subsection-description">{{ subsection.description }}</p>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+    {% endfor %}
+</body>
+</html>

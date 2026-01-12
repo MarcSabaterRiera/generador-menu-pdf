@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='app-icon.png') }}">
+    <title>Exportar {{ menu.name }} a PDF</title>
+    <style>
+        .export-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .export-layout {
+            display: grid;
+            grid-template-columns: 400px 1fr;
+            gap: var(--spacing-lg);
+            margin-top: var(--spacing-lg);
+        }
+
+        .templates-panel {
+            background-color: var(--color-bg-card);
+            padding: var(--spacing-lg);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--box-shadow);
+            height: fit-content;
+            position: sticky;
+            top: var(--spacing-lg);
+        }
+
+        .template-card {
+            border: 2px solid var(--color-secondary);
+            border-radius: var(--border-radius);
+            padding: var(--spacing-md);
+            margin-bottom: var(--spacing-md);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .template-card:hover {
+            border-color: var(--color-primary);
+            background-color: var(--color-accent);
+            transform: translateX(4px);
+        }
+
+        .template-card.active {
+            border-color: var(--color-primary);
+            background-color: var(--color-accent);
+            box-shadow: var(--box-shadow);
+        }
+
+        .template-card h3 {
+            margin: 0 0 var(--spacing-xs) 0;
+            color: var(--color-primary-dark);
+            font-size: var(--font-size-lg);
+        }
+
+        .template-card p {
+            margin: 0;
+            font-size: var(--font-size-sm);
+            color: var(--color-text-secondary);
+        }
+
+        .preview-panel {
+            background-color: var(--color-bg-card);
+            padding: var(--spacing-lg);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--box-shadow);
+        }
+
+        .preview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-md);
+            padding-bottom: var(--spacing-md);
+            border-bottom: 2px solid var(--color-secondary);
+        }
+
+        .preview-container {
+            border: 2px solid var(--color-secondary);
+            border-radius: var(--border-radius);
+            min-height: 600px;
+            background-color: white;
+            position: relative;
+            overflow: auto;
+        }
+
+        .preview-loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: var(--color-text-muted);
+        }
+
+        .preview-content {
+            padding: var(--spacing-md);
+        }
+
+        .export-actions {
+            margin-top: var(--spacing-md);
+            display: flex;
+            gap: var(--spacing-sm);
+            justify-content: flex-end;
+        }
+
+        @media (max-width: 1024px) {
+            .export-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .templates-panel {
+                position: static;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="export-container">
+        <h1>📄 Exportar menú a PDF</h1>
+        <p class="menu-meta">{{ menu.name }} - Creado el {{ menu.created_at }}</p>
+
+        <div class="export-layout">
+            <!-- Panel de selección de plantillas -->
+            <div class="templates-panel">
+                <h2>Selecciona una plantilla</h2>
+                
+                {% for template in templates %}
+                <div class="template-card {% if loop.first %}active{% endif %}" 
+                     data-template-id="{{ template.id }}"
+                     onclick="selectTemplate('{{ template.id }}')">
+                    <h3>{{ template.name }}</h3>
+                    <p>{{ template.description }}</p>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Panel de previsualización -->
+            <div class="preview-panel">
+                <div class="preview-header">
+                    <h2>Previsualización</h2>
+                    <div>
+                        <button type="button" class="btn btn-secondary" onclick="refreshPreview()">
+                            🔄 Actualizar
+                        </button>
+                    </div>
+                </div>
+
+                <div class="preview-container" id="preview-container">
+                    <div class="preview-loading">
+                        <p>⏳ Cargando previsualización...</p>
+                    </div>
+                </div>
+
+                <div class="export-actions">
+                    <a href="/menu/view/{{ menu.name }}" class="btn btn-secondary">Cancelar</a>
+                    <form method="POST" id="export-form" action="" style="display: inline;">
+                        <button type="submit" class="btn">📥 Descargar PDF</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <a href="/menu/view/{{ menu.name }}" class="back-link">← Volver al menú</a>
+    </div>
+
+    <script>
+        let currentTemplate = '{{ templates[0].id }}';
+        const menuName = '{{ menu.name }}';
+
+        // Cargar previsualización inicial
+        document.addEventListener('DOMContentLoaded', function() {
+            loadPreview(currentTemplate);
+        });
+
+        function selectTemplate(templateId) {
+            // Actualizar UI
+            document.querySelectorAll('.template-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            document.querySelector(`[data-template-id="${templateId}"]`).classList.add('active');
+
+            // Actualizar template actual
+            currentTemplate = templateId;
+
+            // Cargar previsualización
+            loadPreview(templateId);
+
+            // Actualizar action del formulario de exportación
+            document.getElementById('export-form').action = `/menu/generate-pdf/${menuName}/${templateId}`;
+        }
+
+        function loadPreview(templateId) {
+            const container = document.getElementById('preview-container');
+            container.innerHTML = '<div class="preview-loading"><p>⏳ Cargando previsualización...</p></div>';
+
+            fetch(`/menu/preview/${menuName}/${templateId}`)
+                .then(response => {
+                    if (!response.ok) throw new Error('Error al cargar previsualización');
+                    return response.text();
+                })
+                .then(html => {
+                    container.innerHTML = html;
+                })
+                .catch(error => {
+                    container.innerHTML = `
+                        <div class="preview-loading">
+                            <p style="color: var(--color-danger);">❌ Error al cargar previsualización</p>
+                            <p style="font-size: var(--font-size-sm);">${error.message}</p>
+                        </div>
+                    `;
+                });
+        }
+
+        function refreshPreview() {
+            loadPreview(currentTemplate);
+        }
+    </script>
+</body>
+</html>
